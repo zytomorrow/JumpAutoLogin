@@ -40,4 +40,4 @@ python run.py --cookie=xxxxxxxxxxxxx --serverKey=zzzzz
 
 ![image-20210521162418432](https://cdn.jsdelivr.net/gh/zytomorrowPic/PicBed@latest/image-20210521162418432.png)
 
-![server酱推送效果](C:\Users\zyLocal\AppData\Roaming\Typora\typora-user-images\image-20210521163353244.png)
+![server酱推送效果](https://cdn.jsdelivr.net/gh/zytomorrowPic/PicBed@latest/image-20210521163353244.png)
