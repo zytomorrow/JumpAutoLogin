@@ -31,4 +31,4 @@ jobs:
       - name: Run a multi-line script
         run: |
           pip install -r requestments.txt
-          python run.py ----cookie=${{ secrets.COOKIE }} --serverKey=${{ secrets.SERVERKEY }}
+          python run.py --cookie=${{ secrets.COOKIE }} --serverKey=${{ secrets.SERVERKEY }}
