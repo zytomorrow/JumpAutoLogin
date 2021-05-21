@@ -102,7 +102,7 @@ if __name__ == '__main__':
                 if lottery_detail['current_day'] >= day:
                     if day not in lottery_detail['already_day']:
                         print(f'补领第{day}天的奖励。', end='')
-                        client.get_lottery(lottery_id, idx)
+                        client.get_lottery(lottery_id, idx+2)
             print('')
         else:
             print(f'未参与，现在参加')
