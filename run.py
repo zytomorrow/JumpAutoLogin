@@ -81,12 +81,12 @@ if __name__ == '__main__':
     cookie = params['cookie']
     serverKey = params['serverKey']
     client = JumpClient(cookie)
-    print('登录系统:', end='')
-    if client.login_app():
-        print('登录成功')
-    else:
-        print('登录失败')
-        exit(1)
+    # print('登录系统:', end='')
+    # if client.login_app():
+    #     print('登录成功')
+    # else:
+    #     print('登录失败')
+    #     exit(1)
     print('获取当前所有抽奖...')
     client.list_all_lottery()
     for lottery_id, detail in client.lottery_dict.items():
