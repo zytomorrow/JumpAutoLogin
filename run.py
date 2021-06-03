@@ -71,6 +71,19 @@ class JumpClient():
             return True
         return False
 
+    def get_flow_status(self):
+        ret = self.session.get(
+            f'{JumpClient.BASIC_URL}/jump/flow/info',
+            headers=self.headers).json()
+        return ret['data']
+
+    def get_nday_flow(self, day=1):
+        ret = self.session.get(f'{JumpClient.BASIC_URL}/jump/flow/add?type={day}',
+                               headers=self.headers).json()
+        if ret['success']:
+            return True
+        return False
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='test the argparse package')
@@ -102,7 +115,7 @@ if __name__ == '__main__':
                 if lottery_detail['current_day'] >= day:
                     if day not in lottery_detail['already_day']:
                         print(f'补领第{day}天的奖励。', end='')
-                        client.get_lottery(lottery_id, idx+2)
+                        client.get_lottery(lottery_id, idx + 2)
             print('')
         else:
             print(f'未参与，现在参加')
@@ -112,18 +125,36 @@ if __name__ == '__main__':
         print(f'刷新[{detail["name"]}--{lottery_id}]参与情况')
         client.check_lottery_count_status(lottery_id)
 
-    table_data = [['序号', 'id号', '名称', '奖品数量', '开奖时间', '参与人数', '参与天数', '奖票数量', '最大可得奖票']]
+    print('开始执行流量领取...')
+    print('获取流量获取周期天数...')
+    flow_data = client.get_flow_status()
+    day_kv = {1: False, 3: False, 4: False}
+    for day, _ in day_kv.items():
+        print(f'领取{day}流量: ', end='')
+        if client.get_nday_flow(day):
+            print('success')
+            day_kv[day] = True
+        else:
+            print('fail')
+
+    table_lottery_data = [['序号', 'id号', '名称', '奖品数量', '开奖时间', '参与人数', '参与天数', '奖票数量', '最大可得奖票']]
     for idx, lottery_id in enumerate(client.lottery_dict):
         detail = client.lottery_dict[lottery_id]
-        table_data.append(
+        table_lottery_data.append(
             [idx + 1, lottery_id, detail['name'].split('x')[0], detail['rewardNum'], detail['drawingTime'],
              detail['joinCount'],
              detail['lottery_detail']['current_day'], detail['lottery_detail']['lottery_count'],
              detail['lottery_detail']['max_lottery_count']])
-    table = GithubFlavoredMarkdownTable(table_data)
-    print(table.table)
+    table_flow_data = [['登录天数', '当日流量领取', '3日流量领取', '4日流量领取', '总流量'],
+                       [flow_data['loginDay'], True if flow_data['isLoginReceive'] == 2 else False, day_kv[3],
+                        day_kv[4], f'{flow_data["flowNumber"]}MB']]
+
+    table_lottery = GithubFlavoredMarkdownTable(table_lottery_data)
+    table_flow = GithubFlavoredMarkdownTable(table_flow_data)
+    print(table_lottery.table)
+    print(table_flow.table)
     if serverKey:
         print(f'执行推送')
         requests.post(f'https://sctapi.ftqq.com/{serverKey}.send',
                       data={'title': 'JumpAutoJoin状态',
-                            'desp': table.table})
+                            'desp': f'{table_lottery.table}\n\n{table_flow.table}'})
